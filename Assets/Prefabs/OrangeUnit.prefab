@@ -69,7 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destinationTrans: {fileID: 0}
   selectionObject: {fileID: 8802723250533851942}
-  isEnemy: 0
+  isEnemy: 1
   enemyMat: {fileID: 0}
   unitSelection: {fileID: 0}
   lineOfSightLayerMask:
