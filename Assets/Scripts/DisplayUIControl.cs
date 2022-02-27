@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/* DisplayUIController handles gameplay logic for displaying game over conditions to user
+ * UI begins hidden in the scene so it is only diplayed on game over condition.
+ * requires a reference to the timerlogic in use for the scene.
+ */
 public class DisplayUIControl : MonoBehaviour
 {
     [SerializeField] GameObject messageDisplayUI;

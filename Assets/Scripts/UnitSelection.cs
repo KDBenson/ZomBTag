@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/*This script handles selecting human units and the patrol points for zombie units
+ */
 public class UnitSelection : MonoBehaviour
 {
     public Camera camera;
@@ -22,7 +24,6 @@ public class UnitSelection : MonoBehaviour
     private void Awake()
     {
         camera = GetComponent<Camera>();
-
     }
 
     private void Update()
@@ -33,22 +34,18 @@ public class UnitSelection : MonoBehaviour
         }
         CheckWinCondition();
     }
-
+    
+    //This is for the user when selecting human units or deselecting all humans
     void RaycastFromCamera()
     {
         RaycastHit _hit;
         Ray _ray = camera.ScreenPointToRay(Input.mousePosition);
-        //only shooting for a layer
-
-
+        //only game objects that are the friendly human unit layer will be recognized
         if (Physics.Raycast(_ray, out _hit, 99999f, unitLayer))
         {
-            //print("Clicked on unit");
             Unit _unit = _hit.transform.GetComponentInParent<Unit>();
             if(_unit != null && !_unit.CheckIfEnemy())
             {
-                //print("unit is not null");
-                //_unit.SetSelectionObjectVis(true);
                 _unit.SelectUnit();
             }
         }
@@ -57,7 +54,6 @@ public class UnitSelection : MonoBehaviour
             //print("clicked nothing therefore unselect");
             for (int i = 0; i < units.Length; i++)
             {
-                //units[i].SetSelectionObjectVis(false);
                 units[i].DeselectUnit();
             }
         }
@@ -68,24 +64,6 @@ public class UnitSelection : MonoBehaviour
         Transform _trans = null;
         _trans = patrolWayPoints[Random.Range(0, patrolWayPoints.Length)].transform;
 
-        return _trans;
-    }
-
-    public Transform RandomUnitTarget()
-    {
-        Unit _unit = null;
-        Transform _trans = null;
-
-        for (int i = 0; i < units.Length; i++)
-        {
-            _unit = units[Random.Range(0, units.Length)];
-            if (_unit.CheckIfEnemy() == false)
-            {
-                _trans = _unit.transform;
-                //print("UnitSelection -> RandomUnitTarget is targeted at: " + _unit.transform.name);
-                break;
-            }
-        }
         return _trans;
     }
 
@@ -105,6 +83,7 @@ public class UnitSelection : MonoBehaviour
         return _allEnemies;
     }
 
+    //This only has 2 references; both game over conditions.
     public void AllUnitsStopMoving()
     {
         Unit _unit = null;
@@ -122,8 +101,7 @@ public class UnitSelection : MonoBehaviour
         {
             //we go in here if they won by beating the clock
             gameTimer.SetTimerActive(false);
-            AllUnitsStopMoving();
-            
+            AllUnitsStopMoving();            
         }
     }
 
@@ -131,6 +109,26 @@ public class UnitSelection : MonoBehaviour
     {
         playerDisplay.SetGameOverMessage();
         playerDisplay.ShowHideUI(true);
+    }
+
+    //This is used for terminator style zombie chasing, any random human unit is set as the target
+    //Not used in this game
+    public Transform RandomUnitTarget()
+    {
+        Unit _unit = null;
+        Transform _trans = null;
+
+        for (int i = 0; i < units.Length; i++)
+        {
+            _unit = units[Random.Range(0, units.Length)];
+            if (_unit.CheckIfEnemy() == false)
+            {
+                _trans = _unit.transform;
+                //print("UnitSelection -> RandomUnitTarget is targeted at: " + _unit.transform.name);
+                break;
+            }
+        }
+        return _trans;
     }
 
 }

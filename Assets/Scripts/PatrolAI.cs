@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/* This is a stand alone script for a patrol navmesh agent.
+ * The game object with a navmesh agent attached will travel
+ * in a loop between defined waypoints or to a randomly assigned one.
+ */
 public class PatrolAI : MonoBehaviour
 {
     private Transform destinationTrans; //where it's going
@@ -28,16 +32,16 @@ public class PatrolAI : MonoBehaviour
         float _distToTarget = _vecToTarget.magnitude;
         if ( _distToTarget <= 1.0f )
         {
-            //IterateWayPointIndex(); //for loop type patrol
-
             UpdateDestination();
         }
     }
 
     void UpdateDestination()
     {
-        //pick a random waypoint to patrol to
-        wayPointIndex = Random.Range(0, wayPoints.Length);
+        //loop patrol
+        IterateWayPointIndex();
+        ////random patrol
+        ////RandomWayPointIndex();
         //set the destination to a waypoint
         destinationTrans = wayPoints[wayPointIndex].transform;
         agent.SetDestination(destinationTrans.position);
@@ -52,6 +56,12 @@ public class PatrolAI : MonoBehaviour
             wayPointIndex = 0;
         }
     }
+    //use this for randomly choosing a waypoint destination
+    void RandomWayPointIndex()
+    {
+        //pick a random waypoint to patrol to
+        wayPointIndex = Random.Range(0, wayPoints.Length);
+    }
 
     IEnumerator CR_NavigationTick()
     {
@@ -59,13 +69,9 @@ public class PatrolAI : MonoBehaviour
         {            
             if (destinationTrans != null)
                 agent.SetDestination(destinationTrans.position);
-
             yield return new WaitForSeconds(0.5f);
         }
 
     }
-
-
-
 
 }

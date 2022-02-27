@@ -5,75 +5,72 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 
-
+/* This script is the 'brains' for player and enemy units.
+ */
 public class Unit : MonoBehaviour
 {    
-    [SerializeField] Transform destinationTrans; //where it go
-    NavMeshAgent agent;                         //what is move
+    [SerializeField] Transform destinationTrans; //object location is where the unit will go towards
+    NavMeshAgent agent;                         //this objects agent
 
-    [SerializeField] GameObject selectionObject; //visual ref
-    bool isSelected = false;                    //hidden unless selected
+    [SerializeField] GameObject selectionObject; //visual reference for selected unit
+    bool isSelected = false;                    //during play it is hidden unless selected
 
-    [SerializeField] bool isEnemy = false;      //player unit or enemy unit
-    [SerializeField] Material enemyMat;         //visual change
-    private int enemyLayer;                     //player unit objects layer changes to enemy
+    [SerializeField] bool isEnemy = false;      //if the unit is a zombie enemy this is set to true
+    [SerializeField] Material enemyMat;         //the material to visually identify the unit as an enemy
+    private int enemyLayer;                     //the layer where enemy units exist
 
-    //don't forget unitSelection is hooked to the camera
+    //The scene requires a UnitSelection script that holds information on all units.
     [SerializeField] UnitSelection unitSelection;       //all the player units
     [SerializeField] LayerMask lineOfSightLayerMask;    //the layer the navigatable world sits
 
-    Animator anim;          //make em groovy
+    Animator anim;          //to animate the models of the unit
 
-
-
+    //set properties when script is loaded
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         enemyLayer = LayerMask.NameToLayer("Enemy");
         anim = GetComponentInChildren<Animator>();
     }
-
+    //begins Navigation coroutine and turns off visual indicator
     private void Start()
     {
         StartCoroutine(CR_NavigationTick());
         SetSelectionObjectVis(false);
     }
-
+    
     private void Update()
     {
-
         //if this unit is designated an enemy...
         if (isEnemy)
         {
-            EnemyAI();
+            EnemyAI(); //use the enemy logic.
         }
-
         if (anim != null)
         {
+            //animation uses a blendtree between idle and sprint
             anim.SetFloat("Velocity", agent.velocity.magnitude / 4f);
         }
         
     }
-
+    //DramaticPause calls coroutine
+    //Unit stops moving for number of seconds
+    //the unit performs an animation then resumes navigation movement.
     public void DramaticPause(int secs, string animation)
     {
         IEnumerator cr = CR_DramaticPause(secs, animation);
         StartCoroutine(cr);
     }
-
-
     IEnumerator CR_DramaticPause(int secs, string animation)
-    {
-        //print("start the dramatic pause for " + gameObject.name);        
-        StopMoving();                           //stay where you are,
-        anim.SetTrigger(animation);             //perform your animation
+    {       
+        StopMoving();                           //unit stays where it is
+        anim.SetTrigger(animation);             //performs the animation
         yield return new WaitForSeconds(secs);      //then in secs# of seconds
-        //print(gameObject.name + " calling GoOnPatrol from CR_DramaticPause");
-        ResumeMoving();                         //resume being able to move
-        GoOnPatrol();                           //where is it going to
-        //print("end the dramatic pause for " + gameObject.name);
+        ResumeMoving();                         //resumes being able to move
+        GoOnPatrol();                           //and gets the destination of where to go
     }
-
+    
+    //Every half second a navigation tick sets the destination of the unit
     IEnumerator CR_NavigationTick()
     {
         while (true)
@@ -95,7 +92,6 @@ public class Unit : MonoBehaviour
             }
             yield return new WaitForSeconds(0.5f);
         }
-
     }
 
     public void SetSelectionObjectVis(bool _isVisible)
@@ -112,7 +108,6 @@ public class Unit : MonoBehaviour
         SetSelectionObjectVis(false);
         isSelected = false;
     }
-
 
     //when a unit is caught, it becomes an enemy and will chase other units
     public void ChangeUnitToEnemy()
@@ -189,7 +184,7 @@ public class Unit : MonoBehaviour
                 }
                 else
                 {
-                    GoOnPatrol();       //start by going on patrol
+                    GoOnPatrol();       
                 }
             }
             else
@@ -223,7 +218,6 @@ public class Unit : MonoBehaviour
     }
     public void StopMoving()
     {
-        //print(gameObject.name + "setting right here as destination STOPMOVING");
         agent.SetDestination(gameObject.transform.position); //stay right here where you are unit
         agent.isStopped = true;
         
@@ -231,7 +225,6 @@ public class Unit : MonoBehaviour
 
     public void ResumeMoving()
     {
-        //print(gameObject.name + "setting destination trans as desination RESUME MOVING");
         agent.SetDestination(destinationTrans.position);        
         agent.isStopped = false;
     }
