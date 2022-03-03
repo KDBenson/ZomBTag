@@ -100,7 +100,7 @@ public class UnitSelection : MonoBehaviour
         if(gameTimer.GameOverCondition())
         {
             //we go in here if they won by beating the clock
-            gameTimer.SetTimerActive(false);
+            gameTimer.SetTimerActive(false); 
             AllUnitsStopMoving();            
         }
     }
@@ -112,7 +112,7 @@ public class UnitSelection : MonoBehaviour
     }
 
     //This is used for terminator style zombie chasing, any random human unit is set as the target
-    //Not used in this game
+    //Not currently used in this game
     public Transform RandomUnitTarget()
     {
         Unit _unit = null;
