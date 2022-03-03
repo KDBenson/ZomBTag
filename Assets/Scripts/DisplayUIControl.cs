@@ -34,11 +34,11 @@ public class DisplayUIControl : MonoBehaviour
         string _msg = "Game Over\n";
         if(gameTimer.GameOverCondition())
         {            
-            _msg += "You won Zombie tag!";
+            _msg += "you survived zombie tag!";
         }
         else
         {            
-            _msg += "You lost Zombie Tag.";
+            _msg += "the zombies won this time.";
         }
         messageDisplayText.text = _msg;
     }
