@@ -9,23 +9,27 @@ using UnityEngine.AI;
  */
 public class PatrolAI : MonoBehaviour
 {
-    private Transform destinationTrans; //where it's going
-    public Transform[] wayPoints;   //places it can go
-    int wayPointIndex;              //for travelling in a loop
+    NavMeshAgent agent;             //the agent for this object in motion
+    private Transform destinationTrans;     //where it's going
+    int wayPointIndex;                      //for travelling in a loop
+    
+    public Transform[] wayPoints;           //all the places it can go
 
-    NavMeshAgent agent;
-
+    //gets navmesh agent for this object
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
 
+    //sets destination and begins navigation tick CR
     private void Start()
     {
         destinationTrans = wayPoints[0];
         StartCoroutine(CR_NavigationTick());
     }
 
+    //every frame, get the distance between this object and the set destination,
+    //if this object is close enough to be 'there', find the next place to go.
     private void Update()
     {
         Vector3 _vecToTarget = destinationTrans.position - transform.position;
@@ -36,18 +40,19 @@ public class PatrolAI : MonoBehaviour
         }
     }
 
+    //update where the unit will go to, loop or random type patrol
     void UpdateDestination()
     {
-        //loop patrol
-        IterateWayPointIndex();
-        ////random patrol
-        ////RandomWayPointIndex();
+        //loop patrol                   ////random patrol
+        IterateWayPointIndex();        ////RandomWayPointIndex();
         //set the destination to a waypoint
         destinationTrans = wayPoints[wayPointIndex].transform;
+        //set the agents destination
         agent.SetDestination(destinationTrans.position);
     }
 
-    //use this if doing 'loop' style patrol
+    //use this if doing 'loop' style patrol.
+    //loops through waypoints in the order of the array
     void IterateWayPointIndex()
     {
         wayPointIndex++;
@@ -63,6 +68,7 @@ public class PatrolAI : MonoBehaviour
         wayPointIndex = Random.Range(0, wayPoints.Length);
     }
 
+    //Every half second this executes
     IEnumerator CR_NavigationTick()
     {
         while (true)

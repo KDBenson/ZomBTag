@@ -9,9 +9,10 @@ using UnityEngine.UI;
  */
 public class DisplayUIControl : MonoBehaviour
 {
+    //in editor assign this object to itself
     [SerializeField] GameObject messageDisplayUI;
     [SerializeField] Text messageDisplayText;
-
+    //in editor assign the object canvas with the timer+timerlogic on it
     [SerializeField] TimerLogic gameTimer;
     
     
@@ -24,16 +25,18 @@ public class DisplayUIControl : MonoBehaviour
         ShowHideUI(false);
     }
 
+    //toggle UI object according to boolean t=on,f=off.
     public void ShowHideUI(bool visible)
     {
         messageDisplayUI.SetActive(visible);
     }
 
+    //checks game over condition from timer, sets appropriate message
     public void SetGameOverMessage()
     {
         string _msg = "Game Over\n";
         if(gameTimer.GameOverCondition())
-        {            
+        {
             _msg += "you survived zombie tag!";
         }
         else

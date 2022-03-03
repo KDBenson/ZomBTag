@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /*This script handles user navigation between scenes
- * It can be on any one game object in the scene
+ * It can be on any one game object in a scene
+ * Needed in all scenes where scene navigation is to happen
  */
 public class SceneNavigationController : MonoBehaviour
 {
@@ -33,7 +34,8 @@ public class SceneNavigationController : MonoBehaviour
         Application.Quit();
         Debug.Log("Quitting Application.");
     }
-    //This works because the game has only 1 game scene and 1 main menu scene(0)
+    //This works because the game has only 1 game scene(1) and 1 main menu scene(0)
+    //built game will start at scene 0
     public void StartGame()
     {
         LoadSceneByBuildIndex(1);
